@@ -27,12 +27,12 @@ Airport_df.show()
 
 Route_df=spark.read.csv(r"C:\Users\kagar\PycharmProjects\Pyspark Airline Project\OUTPUT\Air\Route.csv",header=True)
 
-# Route_df.show()
+Route_df.show()
 # Route_df.printSchema()
 
 Plane_df=spark.read.csv(r"C:\Users\kagar\PycharmProjects\Pyspark Airline Project\OUTPUT\Air\Plane.csv",header=True)
 
-# Plane_df.show()
+Plane_df.show()
 # Plane_df.printSchema()
 
 
@@ -43,9 +43,10 @@ Plane_df=spark.read.csv(r"C:\Users\kagar\PycharmProjects\Pyspark Airline Project
 '''
 
 
-# Airline_df.join(Airport_df, Airline_df.Country == Airport_df.Country, "inner").select("City").distinct().show(5000)
+County_With_Both=Airline_df.join(Airport_df, Airline_df.Country == Airport_df.Country, "inner").select("City").distinct()
 
-# df.join(df1, df.Country == df1.Country, "inner").select("City").show(5000)
+# County_With_Both.show()
+
 
 
 '''
@@ -53,25 +54,22 @@ Plane_df=spark.read.csv(r"C:\Users\kagar\PycharmProjects\Pyspark Airline Project
 '''
 
 
-# A_df = Airport_df.join(Route_df, Airport_df.Airport_ID == Route_df.src_airport_id, "inner").select("airline","airline_id") \
-# .groupby("airline", "airline_id").count()
+Airline_details = Airport_df.join(Route_df, Airport_df.Airport_ID == Route_df.src_airport_id, "inner").select("airline","airline_id") \
+.groupby("airline", "airline_id").count()
 
-# A_df.where(col("count") > 3).show(A_df.count(), False)
+Airline_details.where(col("count") > 3).show(Airline_details.count(), False)
 
+''' OR '''
 
+Airline_details1= Airport_df.join(Route_df, Airport_df.Airport_ID == Route_df.src_airport_id, "inner").select("airline","airline_id") \
+.groupby("airline", "airline_id").count().where(col("count") > 3).distinct()
 
-# A_df = Airport_df.join(Route_df, Airport_df.Airport_ID == Route_df.src_airport_id, "inner").select("airline","airline_id") \
-# .groupby("airline", "airline_id").count().where(col("count") > 3).distinct()
-
-# A_df.show()
+# Airline_details.show()
+# Airline_details1.show()
 
 # print(A_df.count())
 
 
-
-
-#
-# print(A_df.count())
 
 
 '''
@@ -86,20 +84,17 @@ Take_off=Airport_df.join(Route_df, Airport_df.Airport_ID == Route_df.src_airport
 .groupby("src_airport").count()
 
 
+ # Applying Window function on it
 
-#
-# # Applying Window function on it
-#
 windos=Window.partitionBy("count").orderBy(col("count").asc())
 
 take_off_df=Take_off.withColumn("Rank",rank().over(windos))
 
-take_off_df.show()
+take_off_df.where(col("Rank")==1)
 
-# t1=take_off_df.groupby("src_airport").agg(min(col("count")))
-# t1.orderBy(t1.min(count).asc()).show()
+# take_off_df.show()
 
-# # t1.orderBy(take_off_df.min(count).asc()).show()
+
 
 
 
@@ -113,13 +108,13 @@ Minimun No Of Landing:-.
 # Joining Airport_df and Route_df on the basis Of Airport_ID And Group By It AND save It On NEW_df
 
 
-# Landing=Airport_df.join(Route_df, Airport_df.Airport_ID == Route_df.dest_airport_id, "inner").select("dest_airport","airline_id") \
-# .groupby("airline_id", "dest_airport").count()
+Landing=Airport_df.join(Route_df, Airport_df.Airport_ID == Route_df.dest_airport_id, "inner").select("dest_airport","airline_id") \
+.groupby("airline_id", "dest_airport").count()
 
 
-# windos=Window.partitionBy("count").orderBy("count")
+windos=Window.partitionBy("count").orderBy("count")
 
-# landing_df=Landing.withColumn("Rank",rank().over(windos)).distinct()
+landing_df=Landing.withColumn("Rank",rank().over(windos)).distinct()
 
 # landing_df.show()
 
@@ -134,34 +129,34 @@ Minimun No Of Landing:-.
 ''' MAXIMUM NUMBERS OF TAKE-OFF'''
 
 
-# Max_Take_off=Airport_df.join(Route_df, Airport_df.Airport_ID == Route_df.src_airport_id, "inner").select("airline","airline_id","src_airport") \
-# .groupby("src_airport").count()
+Max_Take_off=Airport_df.join(Route_df, Airport_df.Airport_ID == Route_df.src_airport_id, "inner").select("airline","airline_id","src_airport") \
+.groupby("src_airport").count()
 
 # Max_Take_off.show()
 
 # Applying Window function on it
 
-# windos=Window.orderBy(col("count").desc())
-#
-# max_take_off_df=Max_Take_off.withColumn("Rank",rank().over(windos)).distinct()
+windos=Window.orderBy(col("count").desc())
 
-# max_take_off_df.show()
+max_take_off_df=Max_Take_off.withColumn("Rank",rank().over(windos)).distinct()
+
+max_take_off_df.show()
 
 
 
 ''' MAXIMUM NUMBER OF LANDING:-'''
 
 
-# M_Landing=Airport_df.join(Route_df, Airport_df.Airport_ID == Route_df.dest_airport_id, "inner").select("dest_airport","airline_id") \
-# .groupby("dest_airport").count()
-#
-#
-# windos=Window.orderBy(col("count").desc())
-#
-# MAX_landing_df=M_Landing.withColumn("Rank",rank().over(windos)).distinct()
+M_Landing=Airport_df.join(Route_df, Airport_df.Airport_ID == Route_df.dest_airport_id, "inner").select("dest_airport","airline_id") \
+.groupby("dest_airport").count()
+
+
+windos=Window.orderBy(col("count").desc())
+
+MAX_landing_df=M_Landing.withColumn("Rank",rank().over(windos)).distinct()
 
 # MAX_landing_df.show()
-#
+
 
 
 
@@ -177,7 +172,7 @@ Minimun No Of Landing:-.
 
 renamed_df=Airline_df.withColumnRenamed("Airline_id","airline_id")
 
-#### renamed_df.show()
+# renamed_df.show()
 
 
 proccesed_id_df=renamed_df.join(Route_df, on="airline_id" , how="leftouter").select("Airline_id",col("Name").alias("Airline_name"),"src_airport","src_airport_id","dest_airport_id","stops")\
@@ -192,8 +187,8 @@ src_name_df=proccesed_id_df.join(Airport_df, proccesed_id_df.src_airport_id==Air
 
 Final_details=src_name_df.join(Airport_df ,src_name_df.dest_airport_id==Airport_df.Airport_ID,"inner")\
 .select("Airline_id","Airline_name","src_airport",col("Name").alias("dest_Airport"),"stops").distinct()
-#
-Final_details.orderBy("Airline_id").show()
+
+# Final_details.orderBy("Airline_id").show()
 
 
 
