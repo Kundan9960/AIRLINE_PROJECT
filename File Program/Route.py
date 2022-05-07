@@ -39,20 +39,6 @@ if __name__ == '__main__':
     # Route_DF.show()
 
 
-    # Airport_df=spark.read.csv(r"C:\Users\kagar\PycharmProjects\Pyspark Airline Project\OUTPUT\Air\Airport.csv",header=True)
-
-    # Air_df=Airport_df.withColumnRenamed("Airport_ID","src_airport_id")
-    # Air_df.show()
-
-    # Airport_df.show()
-    #
-    #
-    # A_df= Airport_df.join(Route_DF,Airport_df.Airport_ID==Route_DF.src_airport_id,"inner").select("airline","airline_id")\
-    # .groupby("airline","airline_id").count()
-    #
-    # A_df.where(col("count")>3).show(A_df.count(),False)
-    #
-    # print(A_df.count())
 
 
 
@@ -66,12 +52,6 @@ if __name__ == '__main__':
 
 
 
-    # P_Route=Route_DF.groupby("airline_id","src_airport").count()
-    #
-    # P_Route.show()
-    #
-    #
-    # P_Route.join((Airline_df,Airline_df.Airline_id==P_Route.airline_id),"leftouter").filter(('count')>3).select(Airline_df.Name,P_Route.airline_id).show()
 
 
 
@@ -79,6 +59,6 @@ if __name__ == '__main__':
 
 
 
-    # Route_DF.write.csv(r"C:\Users\kagar\PycharmProjects\Pyspark Airline Project\OUTPUT\Route",header=True)
+
 
 
