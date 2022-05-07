@@ -177,7 +177,7 @@ Minimun No Of Landing:-.
 
 renamed_df=Airline_df.withColumnRenamed("Airline_id","airline_id")
 
-# A.show()
+
 
 
 proccesed_id_df=renamed_df.join(Route_df, on="airline_id" , how="leftouter").select("Airline_id",col("Name").alias("Airline_name"),"src_airport","src_airport_id","dest_airport_id","stops")\

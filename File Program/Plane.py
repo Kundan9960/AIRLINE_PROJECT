@@ -27,6 +27,8 @@ df3=Plane_df.withColumn("IATA Code",when((col("IATA Code")== "\\N"),"(Unknown)")
 
 df3.show()
 
+df3.show()
+
 
 
 
