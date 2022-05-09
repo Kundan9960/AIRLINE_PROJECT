@@ -34,6 +34,15 @@ if __name__ == '__main__':
     # df.show()
     # df.printSchema()
 
+    # df.filter(df.Airline_id.isNull()).show(1)
+    # df.filter(df.Name.isNull()).show(1)
+    # df.filter(df.Alies.isNull()).show(10)
+    # df.filter(df.IATA.isNull()).show(1)
+    # df.filter(df.ICAO.isNull()).show(1)
+    # df.filter(df.Call_Sign.isNull()).show(1)
+    # df.filter(df.Country.isNull()).show(1)
+    # df.filter(df.Active.isNull()).show(1)
+
 
     df1=df.na.fill("(Unknown)").na.replace([("\\N")],"(Unknown)")
 
@@ -44,6 +53,15 @@ if __name__ == '__main__':
     df1.printSchema()
 
     df.na.fill("(Unknown)",["Alies"]).na.replace([("\\N")],"(Unknown)").show()
+
+    # df.filter(df.Airline_id == "\\N").show(1)
+    # df.filter(df.Name == "\\N").show(1)
+    # df.filter(df.Alies == "\\N").show(10)
+    # df.filter(df.IATA == "\\N").show(1)
+    # df.filter(df.ICAO == "\\N").show(1)
+    # df.filter(df.Call_Sign == "\\N").show(1)
+    # df.filter(df.Country == "\\N").show(1)
+    # df.filter(df.Active == "\\N").show(1)
 
 
 
