@@ -17,22 +17,22 @@ Airline_df=spark.read.csv(r"C:\Users\kagar\PycharmProjects\Pyspark Airline Proje
 
 
 
-Airline_df.show()
+# Airline_df.show()
 # Airline_df.printSchema()
 
 Airport_df=spark.read.csv(r"C:\Users\kagar\PycharmProjects\Pyspark Airline Project\OUTPUT\Air\Airport.csv",header=True)
 
-Airport_df.show()
+# Airport_df.show()
 # Airport_df.printSchema()
 
 Route_df=spark.read.csv(r"C:\Users\kagar\PycharmProjects\Pyspark Airline Project\OUTPUT\Air\Route.csv",header=True)
 
-Route_df.show()
+# Route_df.show()
 # Route_df.printSchema()
 
 Plane_df=spark.read.csv(r"C:\Users\kagar\PycharmProjects\Pyspark Airline Project\OUTPUT\Air\Plane.csv",header=True)
 
-Plane_df.show()
+# Plane_df.show()
 # Plane_df.printSchema()
 
 
@@ -140,7 +140,7 @@ windos=Window.orderBy(col("count").desc())
 
 max_take_off_df=Max_Take_off.withColumn("Rank",rank().over(windos)).distinct()
 
-max_take_off_df.show()
+# max_take_off_df.show()
 
 
 
@@ -175,7 +175,8 @@ renamed_df=Airline_df.withColumnRenamed("Airline_id","airline_id")
 # renamed_df.show()
 
 
-proccesed_id_df=renamed_df.join(Route_df, on="airline_id" , how="leftouter").select("Airline_id",col("Name").alias("Airline_name"),"src_airport","src_airport_id","dest_airport_id","stops")\
+proccesed_id_df=renamed_df.join(Route_df, on="airline_id" , how="leftouter")\
+.select("Airline_id",col("Name").alias("Airline_name"),"src_airport","src_airport_id","dest_airport_id","stops")\
 .where(col("stops")==0).distinct()
 
 # proccesed_id_df.show()
@@ -190,6 +191,73 @@ Final_details=src_name_df.join(Airport_df ,src_name_df.dest_airport_id==Airport_
 
 # Final_details.orderBy("Airline_id").show()
 
+# print(Final_details.count())
+
+
+
+
+
+
+
+
+
+
+''''  SQL '''
+
+Airline_df.createOrReplaceTempView("Airline")
+Airport_df.createOrReplaceTempView("Airport")
+Route_df.createOrReplaceTempView("Route")
+Plane_df.createOrReplaceTempView("Plane")
+
+
+
+'''
+2. find the country name which is having both airlines and airport
+
+'''
+
+Having_Both=spark.sql("select distinct(A.Country) from Airport A join Airline B \
+                    on A.Country=B.Country")
+
+# Having_Both.show(truncate=False)
+
+
+
+
+
+
+
+
+'3. get the airlines details like name, id,. which is has taken takeoff more than 3 times from same airport'
+
+
+Count=spark.sql("select A.Name,B.src_airport,B.airline_id,count(*) from Airline A\
+                join Route B\
+                on A.Airline_id = B.airline_id \
+                group by A.Name,B.src_airport,B.airline_id having count(*)>3")
+
+# Count.show()
+
+
+
+
+'''
+3.get airport details which has minimum number of takeoffs and landing.
+'''
+
+
+
+
+'''
+5. Get the airline details, which is having direct flights.
+ details like airline id, name, source airport name, and destination airport name
+'''
+
+
+Details=spark.sql("select A.Airline_id,Name,src_airport,dest_airport,stops from Airline A join Route R\
+ on A.Airline_id=R.airline_id  where stops=0")
+
+# Details.show()
 
 
 
