@@ -254,10 +254,23 @@ Count=spark.sql("select A.Name,B.src_airport,B.airline_id,count(*) from Airline 
 '''
 
 
-Details=spark.sql("select A.Airline_id,Name,src_airport,dest_airport,stops from Airline A join Route R\
+Details=spark.sql("select A.Airline_id,Name as Airline_Name,src_airport,dest_airport,stops from Airline A join Route R\
  on A.Airline_id=R.airline_id  where stops=0")
 
 # Details.show()
+
+Final_DET=spark.sql("select AL.airline_id, AL.name Airline_name, Airp.Name source_Airport_name,Airp1.Name Desti_Airport,R.stops\
+          from Route R\
+           join Airline AL on R.airline_id=AL.Airline_id \
+           join Airport Airp on R.src_airport_id=Airp.Airport_ID\
+           join Airport Airp1 on R.dest_airport_id=Airp1.Airport_ID\
+           where stops=0 ")
+
+# Final_DET.orderBy("Airline_id").show()
+# print(Final_DET.count())
+
+
+
 
 
 
